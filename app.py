@@ -4,7 +4,7 @@ import streamlit as st
 
 from qr_scanner_component import qr_scanner
 from qr_token import parse_token
-from storage import load_stamps, save_stamps
+from storage import load_stamps, peek_raw_storage, save_stamps
 from stores import STORES
 
 st.set_page_config(
@@ -25,6 +25,18 @@ if st.session_state.stamps_load_attempts < 3:
     st.session_state.stamps |= load_stamps()
     st.session_state.stamps_load_attempts += 1
     st.rerun()
+
+# save_stamps() の書き込みはブラウザ側の実行を待たない fire-and-forget のため、
+# 1回呼んだ直後に画面を作り直すと、コンポーネントが実際に localStorage へ
+# 書き込む前に消えてしまうことがある。読み込み側と同様に、複数回の再実行に
+# わたって呼び直すことで書き込みが反映される猶予を作る。
+st.session_state.setdefault("pending_saves", 0)
+if st.session_state.pending_saves > 0:
+    save_stamps(st.session_state.stamps)
+    st.session_state.pending_saves -= 1
+    if st.session_state.pending_saves > 0:
+        time.sleep(0.3)
+        st.rerun()
 
 st.session_state.setdefault("view", "list")
 st.session_state.setdefault("selected_store", None)
@@ -85,6 +97,11 @@ def stamp_frame_html(store: dict, got: bool) -> str:
 st.caption("SHINJO・MANBACHO")
 st.title("万場町まちなかスタンプラリー")
 
+with st.expander("🛠️ デバッグ：保存状態を確認（実証実験中のみ表示）"):
+    st.write("session_state.stamps:", sorted(st.session_state.stamps))
+    st.write("localStorage 生データ:", peek_raw_storage())
+    st.caption("この枠は動作確認用です。問題なく動くようになったら削除してください。")
+
 if st.session_state.view == "list":
     got_count = len(st.session_state.stamps)
     st.progress(got_count / len(STORES))
@@ -142,15 +159,10 @@ else:
                     and parsed["secret"] == store["secret"]
                 ):
                     st.session_state.stamps.add(store["id"])
-                    save_stamps(st.session_state.stamps)
+                    st.session_state.pending_saves = 3
                     st.session_state[show_key] = False
                     st.success("スタンプを獲得しました！")
                     st.balloons()
-                    # save_stamps() の書き込みはブラウザ側での実行を待たない
-                    # fire-and-forget のため、即 rerun するとその処理が完了する前に
-                    # コンポーネントごと画面から消えてしまうことがある。実際に
-                    # localStorage へ書き込まれる時間を確保してから遷移する。
-                    time.sleep(0.6)
                     st.rerun()
                 else:
                     st.error("このQRコードはこのお店のものではないようです。もう一度お試しください。")

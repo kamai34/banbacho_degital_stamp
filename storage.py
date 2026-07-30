@@ -20,3 +20,8 @@ def load_stamps() -> set[str]:
 
 def save_stamps(stamps: set[str]) -> None:
     _storage().setItem(_KEY, ",".join(sorted(stamps)))
+
+
+def peek_raw_storage() -> dict:
+    """デバッグ用：localStorage の中身をそのまま返す。"""
+    return _storage().getAll()
