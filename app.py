@@ -1,3 +1,5 @@
+import time
+
 import streamlit as st
 
 from qr_scanner_component import qr_scanner
@@ -144,6 +146,11 @@ else:
                     st.session_state[show_key] = False
                     st.success("スタンプを獲得しました！")
                     st.balloons()
+                    # save_stamps() の書き込みはブラウザ側での実行を待たない
+                    # fire-and-forget のため、即 rerun するとその処理が完了する前に
+                    # コンポーネントごと画面から消えてしまうことがある。実際に
+                    # localStorage へ書き込まれる時間を確保してから遷移する。
+                    time.sleep(0.6)
                     st.rerun()
                 else:
                     st.error("このQRコードはこのお店のものではないようです。もう一度お試しください。")
