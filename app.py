@@ -12,11 +12,16 @@ st.set_page_config(
 )
 
 # --- 初期化 -----------------------------------------------------------
-# local storage からの読み出しは初回レンダリングでは値が返らないことがあるため、
-# 1度だけ強制的に再実行して値を確定させる。
-if "stamps_ready" not in st.session_state:
-    st.session_state.stamps = load_stamps()
-    st.session_state.stamps_ready = True
+# local storage からの読み出しはブラウザとの往復が必要なため、セッション開始直後の
+# 数回は空の値しか返らないことがある（ライブラリ既知の挙動）。読み込めた分は
+# 都度合算しつつ、数回リトライしてから値を確定させる。
+if "stamps" not in st.session_state:
+    st.session_state.stamps = set()
+    st.session_state.stamps_load_attempts = 0
+
+if st.session_state.stamps_load_attempts < 3:
+    st.session_state.stamps |= load_stamps()
+    st.session_state.stamps_load_attempts += 1
     st.rerun()
 
 st.session_state.setdefault("view", "list")
