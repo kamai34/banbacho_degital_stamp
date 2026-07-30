@@ -12,6 +12,8 @@ STORES = [
         "intro": "（お店の紹介文をここに入力してください。営業時間や取り扱い商品など）",
         "question": "（オーナーへの質問をここに入力してください。例：一番人気の商品は？）",
         "secret": "NzJ71Yp5HH0",
+        "accent": ("#D98CB3", "#F3C6DC"),
+        "icon": "🌸",
     },
     {
         "id": "uoya",
@@ -21,6 +23,8 @@ STORES = [
         "intro": "（お店の紹介文をここに入力してください）",
         "question": "（オーナーへの質問をここに入力してください）",
         "secret": "HvcWxsSkB8I",
+        "accent": ("#6E9B5B", "#B7D69B"),
+        "icon": "🐟",
     },
     {
         "id": "soba",
@@ -30,6 +34,8 @@ STORES = [
         "intro": "地元名物の茶そばが自慢のお蕎麦屋さん。（紹介文を入力してください）",
         "question": "（オーナーへの質問をここに入力してください）",
         "secret": "gFSVTEmI_RQ",
+        "accent": ("#8A7A6B", "#C6B9A9"),
+        "icon": "🍵",
     },
     {
         "id": "kissa_nokurashi",
@@ -39,5 +45,7 @@ STORES = [
         "intro": "コーヒー好きのお母さんが営む喫茶店。（紹介文を入力してください）",
         "question": "（オーナーへの質問をここに入力してください）",
         "secret": "elYFXgMQQkI",
+        "accent": ("#2B4570", "#7FA0C9"),
+        "icon": "☕",
     },
 ]

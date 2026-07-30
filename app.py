@@ -33,46 +33,98 @@ def go_detail(store_id: str):
     st.session_state.selected_store = store_id
 
 
+def tile_css(store: dict, got: bool) -> str:
+    a, b = store["accent"]
+    ring = "0 0 0 3px #C9A24B, 0 6px 16px rgba(38,52,74,.18)" if got else "0 4px 10px rgba(38,52,74,.12)"
+    opacity = "1" if got else ".8"
+    return f"""
+    <style>
+    .st-key-tile_{store['id']} button {{
+        background: linear-gradient(135deg, {a}, {b}) !important;
+        color: #fff !important;
+        aspect-ratio: 1 / 1;
+        font-size: 15px !important;
+        font-weight: 700 !important;
+        box-shadow: {ring};
+        opacity: {opacity};
+    }}
+    </style>
+    """
+
+
+def stamp_frame_html(store: dict, got: bool) -> str:
+    if got:
+        label = store["name"][:2]
+        return f"""
+        <div style="width:150px;height:150px;margin:14px auto;border-radius:50%;
+        border:5px solid #BD4A34;display:flex;align-items:center;justify-content:center;
+        flex-direction:column;font-family:'Shippori Mincho',serif;font-weight:700;
+        color:#BD4A34;background:#FFFDF8;">
+          <span style="font-size:28px;">{store['icon']}</span>
+          <span style="font-size:14px;margin-top:2px;">{label}</span>
+          <span style="font-size:10px;letter-spacing:.05em;margin-top:2px;">獲得済み</span>
+        </div>
+        """
+    return """
+    <div style="width:150px;height:150px;margin:14px auto;border-radius:50%;
+    border:3px dashed #D8CFBC;display:flex;align-items:center;justify-content:center;
+    font-size:12px;color:#9C9587;text-align:center;padding:0 24px;line-height:1.6;">
+      ここにスタンプが<br>押されます
+    </div>
+    """
+
+
 # --- 画面 ---------------------------------------------------------------
+st.caption("SHINJO・MANBACHO")
 st.title("万場町まちなかスタンプラリー")
 
 if st.session_state.view == "list":
     got_count = len(st.session_state.stamps)
-    st.caption(f"獲得スタンプ: {got_count} / {len(STORES)}")
+    st.progress(got_count / len(STORES))
+    st.caption(f"獲得スタンプ　{got_count} / {len(STORES)}")
+
     if got_count == len(STORES):
         st.success("すべてのスタンプを集めました！おめでとうございます 🎉")
 
-    for store in STORES:
-        got = store["id"] in st.session_state.stamps
-        label = f"{'✅' if got else '⬜'}　{store['name']}"
-        if st.button(label, key=f"list_{store['id']}", use_container_width=True):
-            go_detail(store["id"])
-            st.rerun()
+    cols_per_row = 4
+    for row_start in range(0, len(STORES), cols_per_row):
+        row_stores = STORES[row_start : row_start + cols_per_row]
+        cols = st.columns(cols_per_row)
+        for col, store in zip(cols, row_stores):
+            got = store["id"] in st.session_state.stamps
+            with col:
+                st.html(tile_css(store, got))
+                label = f"{store['icon']}\n\n{store['name']}"
+                if st.button(label, key=f"tile_{store['id']}", use_container_width=True):
+                    go_detail(store["id"])
+                    st.rerun()
 
 else:
     store = next(s for s in STORES if s["id"] == st.session_state.selected_store)
+    got = store["id"] in st.session_state.stamps
 
-    if st.button("← 一覧にもどる"):
+    if st.button("一覧にもどる", icon=":material/arrow_back:"):
         go_list()
         st.rerun()
 
-    st.subheader(store["name"])
-    st.image(store["photo"], use_container_width=True)
-    st.markdown(f"**オーナー**：{store['owner_name']}")
-    st.write(store["intro"])
-    st.info(f"🗣️ オーナーへの質問：{store['question']}")
+    st.subheader(f"{store['icon']} {store['name']}")
 
-    st.divider()
-    st.markdown("### スタンプ")
+    with st.container(border=True):
+        st.image(store["photo"], use_container_width=True)
+        st.markdown(f"**オーナー**：{store['owner_name']}")
+        st.write(store["intro"])
 
-    got = store["id"] in st.session_state.stamps
+    with st.container(border=True):
+        st.markdown("**🗣️ オーナーへの質問**")
+        st.write(store["question"])
+
+    st.html(stamp_frame_html(store, got))
+
     show_key = f"show_scanner_{store['id']}"
 
     if got:
-        st.success("スタンプ獲得済み ✅")
+        st.success("スタンプ獲得済みです ✅")
     else:
-        st.write("⬜ 未獲得")
-
         if st.session_state.get(show_key):
             token = qr_scanner(key=f"scan_{store['id']}")
             if token:
@@ -94,6 +146,13 @@ else:
                 st.session_state[show_key] = False
                 st.rerun()
         else:
-            if st.button("📷 カメラを起動", key=f"btn_{store['id']}", use_container_width=True):
+            if st.button(
+                "カメラを起動してQRを読み取る",
+                key=f"btn_{store['id']}",
+                type="primary",
+                use_container_width=True,
+                icon=":material/photo_camera:",
+            ):
                 st.session_state[show_key] = True
                 st.rerun()
+            st.caption("お店に設置されたQRコードを画面に映してください")

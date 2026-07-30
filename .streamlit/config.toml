@@ -1,0 +1,15 @@
+[theme]
+base = "light"
+primaryColor = "#BD4A34"
+backgroundColor = "#F7F2E7"
+secondaryBackgroundColor = "#EFE7D6"
+textColor = "#26344A"
+borderColor = "#D8CFBC"
+linkColor = "#2B4570"
+
+font = "'Zen Kaku Gothic New':https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap"
+headingFont = "'Shippori Mincho':https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&display=swap"
+
+baseRadius = "large"
+buttonRadius = "full"
+showWidgetBorder = false
