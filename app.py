@@ -2,17 +2,10 @@ import time
 
 import streamlit as st
 
-from streamlit_local_storage import LocalStorage
-
 from qr_scanner_component import qr_scanner
 from qr_token import parse_token
 from storage import load_stamps, save_stamps
 from stores import STORES
-
-
-def peek_raw_storage() -> dict:
-    """デバッグ用：localStorage の中身をそのまま返す。"""
-    return LocalStorage().getAll()
 
 st.set_page_config(
     page_title="万場町まちなかスタンプラリー",
@@ -103,11 +96,6 @@ def stamp_frame_html(store: dict, got: bool) -> str:
 # --- 画面 ---------------------------------------------------------------
 st.caption("SHINJO・MANBACHO")
 st.title("万場町まちなかスタンプラリー")
-
-with st.expander("🛠️ デバッグ：保存状態を確認（実証実験中のみ表示）"):
-    st.write("session_state.stamps:", sorted(st.session_state.stamps))
-    st.write("localStorage 生データ:", peek_raw_storage())
-    st.caption("この枠は動作確認用です。問題なく動くようになったら削除してください。")
 
 if st.session_state.view == "list":
     got_count = len(st.session_state.stamps)
