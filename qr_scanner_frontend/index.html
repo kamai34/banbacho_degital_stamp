@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<style>
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+  #reader { width: 100%; }
+  #msg { color: #c00; font-size: 13px; padding: 6px 2px; }
+</style>
+</head>
+<body>
+<div id="reader"></div>
+<div id="msg"></div>
+<script>
+  // Streamlit component protocol (raw postMessage, no build step needed)
+  const SET_COMPONENT_VALUE = "streamlit:setComponentValue";
+  const COMPONENT_READY = "streamlit:componentReady";
+  const SET_FRAME_HEIGHT = "streamlit:setFrameHeight";
+
+  function sendMessage(type, data) {
+    const payload = Object.assign({ isStreamlitMessage: true, type: type }, data);
+    window.parent.postMessage(payload, "*");
+  }
+
+  function setFrameHeight(height) {
+    sendMessage(SET_FRAME_HEIGHT, { height: height });
+  }
+
+  function sendValue(value) {
+    sendMessage(SET_COMPONENT_VALUE, { value: value });
+  }
+
+  sendMessage(COMPONENT_READY, { apiVersion: 1 });
+  setFrameHeight(360);
+
+  let sent = false;
+
+  function onScanSuccess(decodedText) {
+    if (sent) return;
+    sent = true;
+    html5QrCode.stop().catch(() => {});
+    sendValue(decodedText);
+  }
+
+  const html5QrCode = new Html5Qrcode("reader");
+  html5QrCode
+    .start(
+      { facingMode: "environment" },
+      { fps: 10, qrbox: 220 },
+      onScanSuccess,
+      () => {}
+    )
+    .catch((err) => {
+      document.getElementById("msg").innerText =
+        "カメラを起動できませんでした。ブラウザのカメラ権限設定をご確認ください。(" + err + ")";
+      setFrameHeight(420);
+    });
+</script>
+</body>
+</html>
