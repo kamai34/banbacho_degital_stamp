@@ -2,10 +2,17 @@ import time
 
 import streamlit as st
 
+from streamlit_local_storage import LocalStorage
+
 from qr_scanner_component import qr_scanner
 from qr_token import parse_token
-from storage import load_stamps, peek_raw_storage, save_stamps
+from storage import load_stamps, save_stamps
 from stores import STORES
+
+
+def peek_raw_storage() -> dict:
+    """デバッグ用：localStorage の中身をそのまま返す。"""
+    return LocalStorage().getAll()
 
 st.set_page_config(
     page_title="万場町まちなかスタンプラリー",
