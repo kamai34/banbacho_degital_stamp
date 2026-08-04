@@ -2,10 +2,13 @@ import time
 
 import streamlit as st
 
+import analytics
 from qr_scanner_component import qr_scanner
 from qr_token import parse_token
 from storage import load_stamps, save_stamps
 from stores import STORES
+
+AGE_GROUPS = ["10代以下", "20代", "30代", "40代", "50代", "60代以上"]
 
 st.set_page_config(
     page_title="万場町まちなかスタンプラリー",
@@ -37,6 +40,28 @@ if st.session_state.pending_saves > 0:
     if st.session_state.pending_saves > 0:
         time.sleep(0.3)
         st.rerun()
+
+# --- 年代アンケート（初回アクセス時に1回だけ） -----------------------------
+if "age_survey_done" not in st.session_state:
+    st.caption("SHINJO・MANBACHO")
+    st.title("万場町まちなかスタンプラリー")
+    st.write("ようこそ！差し支えなければ、年代を教えてください（任意・今後の企画の参考にします）")
+
+    chosen = None
+    cols = st.columns(3)
+    for i, age_group in enumerate(AGE_GROUPS):
+        with cols[i % 3]:
+            if st.button(age_group, key=f"age_{age_group}", use_container_width=True):
+                chosen = age_group
+
+    skip = st.button("答えない", use_container_width=True)
+
+    if chosen or skip:
+        analytics.log_access(chosen or "未回答")
+        st.session_state.age_survey_done = True
+        st.rerun()
+
+    st.stop()
 
 st.session_state.setdefault("view", "list")
 st.session_state.setdefault("selected_store", None)
@@ -156,6 +181,7 @@ else:
                     st.session_state.stamps.add(store["id"])
                     st.session_state.pending_saves = 3
                     st.session_state[show_key] = False
+                    analytics.log_stamp(store["id"], store["name"])
                     st.success("スタンプを獲得しました！")
                     st.balloons()
                     st.rerun()
