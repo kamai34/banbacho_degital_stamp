@@ -1,6 +1,7 @@
 from streamlit_local_storage import LocalStorage
 
 _KEY = "manbacho_stamps"
+_AGE_SURVEY_KEY = "manbacho_age_survey_done"
 
 
 def _storage() -> LocalStorage:
@@ -20,3 +21,11 @@ def load_stamps() -> set[str]:
 
 def save_stamps(stamps: set[str]) -> None:
     _storage().setItem(_KEY, ",".join(sorted(stamps)))
+
+
+def load_age_survey_done() -> bool:
+    return _storage().getItem(_AGE_SURVEY_KEY) == "1"
+
+
+def save_age_survey_done() -> None:
+    _storage().setItem(_AGE_SURVEY_KEY, "1")

@@ -5,7 +5,12 @@ import streamlit as st
 import analytics
 from qr_scanner_component import qr_scanner
 from qr_token import parse_token
-from storage import load_stamps, save_stamps
+from storage import (
+    load_age_survey_done,
+    load_stamps,
+    save_age_survey_done,
+    save_stamps,
+)
 from stores import STORES
 
 AGE_GROUPS = ["10代以下", "20代", "30代", "40代", "50代", "60代以上"]
@@ -22,10 +27,13 @@ st.set_page_config(
 # 都度合算しつつ、数回リトライしてから値を確定させる。
 if "stamps" not in st.session_state:
     st.session_state.stamps = set()
+    st.session_state.age_survey_done = False
     st.session_state.stamps_load_attempts = 0
 
 if st.session_state.stamps_load_attempts < 3:
     st.session_state.stamps |= load_stamps()
+    if load_age_survey_done():
+        st.session_state.age_survey_done = True
     st.session_state.stamps_load_attempts += 1
     st.rerun()
 
@@ -36,13 +44,15 @@ if st.session_state.stamps_load_attempts < 3:
 st.session_state.setdefault("pending_saves", 0)
 if st.session_state.pending_saves > 0:
     save_stamps(st.session_state.stamps)
+    if st.session_state.age_survey_done:
+        save_age_survey_done()
     st.session_state.pending_saves -= 1
     if st.session_state.pending_saves > 0:
         time.sleep(0.3)
         st.rerun()
 
-# --- 年代アンケート（初回アクセス時に1回だけ） -----------------------------
-if "age_survey_done" not in st.session_state:
+# --- 年代アンケート（端末ごとに初回アクセス時1回だけ） -----------------------
+if not st.session_state.age_survey_done:
     st.caption("SHINJO・MANBACHO")
     st.title("万場町まちなかスタンプラリー")
     st.write("ようこそ！差し支えなければ、年代を教えてください（任意・今後の企画の参考にします）")
@@ -59,6 +69,7 @@ if "age_survey_done" not in st.session_state:
     if chosen or skip:
         analytics.log_access(chosen or "未回答")
         st.session_state.age_survey_done = True
+        st.session_state.pending_saves = 3
         st.rerun()
 
     st.stop()
