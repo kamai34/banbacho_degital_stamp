@@ -8,7 +8,7 @@ from qr_scanner_component import qr_scanner
 from qr_token import parse_token
 from stores import STORES
 
-AGE_GROUPS = ["10代以下", "20代", "30代", "40代", "50代", "60代以上"]
+AGE_GROUPS = ["10代以下", "20代", "30代", "40代", "50代", "60代", "70代", "80代以上"]
 
 _STAMPS_KEY = "manbacho_stamps"
 _AGE_SURVEY_KEY = "manbacho_age_survey_done"
