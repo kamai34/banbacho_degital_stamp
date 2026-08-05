@@ -195,7 +195,7 @@ else:
         st.write(store["intro"])
 
     with st.container(border=True):
-        st.markdown("**🗣️ オーナーへの質問**")
+        st.markdown("**🗣️ オーナーにこんなことを聞いてみては？**")
         st.write(store["question"])
 
     st.html(stamp_frame_html(store, got))
