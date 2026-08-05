@@ -1,19 +1,44 @@
 import time
 
 import streamlit as st
+from streamlit_local_storage import LocalStorage
 
 import analytics
 from qr_scanner_component import qr_scanner
 from qr_token import parse_token
-from storage import (
-    load_age_survey_done,
-    load_stamps,
-    save_age_survey_done,
-    save_stamps,
-)
 from stores import STORES
 
 AGE_GROUPS = ["10代以下", "20代", "30代", "40代", "50代", "60代以上"]
+
+_STAMPS_KEY = "manbacho_stamps"
+_AGE_SURVEY_KEY = "manbacho_age_survey_done"
+
+
+def _storage() -> LocalStorage:
+    # LocalStorage() は自身の内部で st.session_state を見て、セッションごとに
+    # ブラウザとの getAll 往復を1回だけ行うようキャッシュしている。そのため
+    # モジュールレベルでインスタンス化して使い回す（＝全セッションで共有される）
+    # のではなく、呼び出しのたびに生成してこの仕組みに任せる必要がある。
+    return LocalStorage()
+
+
+def load_stamps() -> set[str]:
+    raw = _storage().getItem(_STAMPS_KEY)
+    if not raw:
+        return set()
+    return {x for x in raw.split(",") if x}
+
+
+def save_stamps(stamps: set[str]) -> None:
+    _storage().setItem(_STAMPS_KEY, ",".join(sorted(stamps)))
+
+
+def load_age_survey_done() -> bool:
+    return _storage().getItem(_AGE_SURVEY_KEY) == "1"
+
+
+def save_age_survey_done() -> None:
+    _storage().setItem(_AGE_SURVEY_KEY, "1")
 
 st.set_page_config(
     page_title="万場町まちなかスタンプラリー",
