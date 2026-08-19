@@ -83,11 +83,9 @@ if not st.session_state.age_survey_done:
     st.write("ようこそ！差し支えなければ、年代を教えてください（任意・今後の企画の参考にします）")
 
     chosen = None
-    cols = st.columns(3)
-    for i, age_group in enumerate(AGE_GROUPS):
-        with cols[i % 3]:
-            if st.button(age_group, key=f"age_{age_group}", use_container_width=True):
-                chosen = age_group
+    for age_group in AGE_GROUPS:
+        if st.button(age_group, key=f"age_{age_group}", use_container_width=True):
+            chosen = age_group
 
     skip = st.button("答えない", use_container_width=True)
 
