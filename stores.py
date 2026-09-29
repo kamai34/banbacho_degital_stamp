@@ -6,7 +6,7 @@
 STORES = [
     {
         "id": "hanaya",
-        "name": "花屋",
+        "name": "ハナヤ花店",
         "owner_name": "（オーナー名を入力）",
         "photo": "assets/hanaya.png",
         "intro": "（お店の紹介文をここに入力してください。営業時間や取り扱い商品など）",
@@ -17,7 +17,7 @@ STORES = [
     },
     {
         "id": "uoya",
-        "name": "魚屋",
+        "name": "黒田時計店",
         "owner_name": "（オーナー名を入力）",
         "photo": "assets/uoya.png",
         "intro": "（お店の紹介文をここに入力してください）",
@@ -28,13 +28,13 @@ STORES = [
     },
     {
         "id": "soba",
-        "name": "蕎麦屋",
+        "name": "富樫米店",
         "owner_name": "（オーナー名を入力）",
         "photo": "assets/soba.png",
         "intro": "地元名物の茶そばが自慢のお蕎麦屋さん。（紹介文を入力してください）",
         "question": "（オーナーへの質問をここに入力してください）",
         "secret": "gFSVTEmI_RQ",
-        "accent": ("#8A7A6B", "#C6B9A9"),
+        "accent": ("#FFFFFF", "#FFFFFF"),
         "icon": "🍵",
     },
     {
@@ -47,5 +47,16 @@ STORES = [
         "secret": "elYFXgMQQkI",
         "accent": ("#2B4570", "#7FA0C9"),
         "icon": "☕",
+    },
+    {
+        "id": "shoji_kaban",
+        "name": "荘司カバン店",
+        "owner_name": "（オーナー名を入力）",
+        "photo": "assets/shoji_kaban.png",
+        "intro": "（お店の紹介文をここに入力してください。営業時間や取り扱い商品など）",
+        "question": "（オーナーへの質問をここに入力してください。例：一番人気の商品は？）",
+        "secret": "snliMlyRBd9",
+        "accent": ("#8C6B4F", "#D2B48C"),
+        "icon": "👜",
     },
 ]
