@@ -114,7 +114,7 @@ def go_detail(store_id: str):
 def tile_css(store: dict, got: bool) -> str:
     a, b = store["accent"]
     ring = "0 0 0 3px #C9A24B, 0 6px 16px rgba(38,52,74,.18)" if got else "0 4px 10px rgba(38,52,74,.12)"
-    opacity = "1" if got else ".8"
+    opacity = "1" if got or store.get("fixed_opacity") else ".8"
     return f"""
     <style>
     .st-key-tile_{store['id']} button {{

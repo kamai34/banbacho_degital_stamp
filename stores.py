@@ -34,8 +34,9 @@ STORES = [
         "intro": "地元名物の茶そばが自慢のお蕎麦屋さん。（紹介文を入力してください）",
         "question": "（オーナーへの質問をここに入力してください）",
         "secret": "gFSVTEmI_RQ",
-        "accent": ("#FFFFFF", "#FFFFFF"),
+        "accent": ("#F5EFDD", "#F5EFDD"),
         "icon": "🍵",
+        "fixed_opacity": True,
     },
     {
         "id": "kissa_nokurashi",
