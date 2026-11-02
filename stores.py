@@ -3,6 +3,10 @@
 # "secret" は QR コード生成・照合に使う秘密文字列です。値を変えたら
 # generate_qr_codes.py を再実行して QR 画像も作り直してください。
 
+# 最終的に参加予定の店舗数。STORES がこれより少ない間、一覧画面には
+# 残り枠が「近日公開」のプレースホルダータイルとして表示されます。
+TOTAL_PLANNED_STORES = 10
+
 STORES = [
     {
         "id": "hanaya",
@@ -14,6 +18,7 @@ STORES = [
         "secret": "NzJ71Yp5HH0",
         "accent": ("#D98CB3", "#F3C6DC"),
         "icon": "🌸",
+        "stamp_image": "assets/stamps/hanaya.png",
     },
     {
         "id": "uoya",
@@ -25,6 +30,7 @@ STORES = [
         "secret": "HvcWxsSkB8I",
         "accent": ("#6E9B5B", "#B7D69B"),
         "icon": "🐟",
+        "stamp_image": "assets/stamps/uoya.png",
     },
     {
         "id": "soba",
@@ -37,6 +43,7 @@ STORES = [
         "accent": ("#F5EFDD", "#F5EFDD"),
         "icon": "🍵",
         "fixed_opacity": True,
+        "stamp_image": "assets/stamps/soba.png",
     },
     {
         "id": "kissa_nokurashi",
@@ -48,6 +55,7 @@ STORES = [
         "secret": "elYFXgMQQkI",
         "accent": ("#2B4570", "#7FA0C9"),
         "icon": "☕",
+        "stamp_image": "assets/stamps/kissa_nokurashi.png",
     },
     {
         "id": "shoji_kaban",
@@ -59,5 +67,6 @@ STORES = [
         "secret": "snliMlyRBd9",
         "accent": ("#8C6B4F", "#D2B48C"),
         "icon": "👜",
+        "stamp_image": "assets/stamps/shoji_kaban.png",
     },
 ]

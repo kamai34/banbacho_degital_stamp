@@ -6,7 +6,7 @@ from streamlit_local_storage import LocalStorage
 import analytics
 from qr_scanner_component import qr_scanner
 from qr_token import parse_token
-from stores import STORES
+from stores import STORES, TOTAL_PLANNED_STORES
 
 AGE_GROUPS = ["10代以下", "20代", "30代", "40代", "50代", "60代", "70代", "80代以上"]
 
@@ -152,6 +152,31 @@ def stamp_frame_html(store: dict, got: bool) -> str:
     """
 
 
+def render_stamp(store: dict, got: bool) -> None:
+    if got and store.get("stamp_image"):
+        _, mid, _ = st.columns([1, 2, 1])
+        with mid:
+            st.image(store["stamp_image"], use_container_width=True)
+            st.markdown(
+                "<p style='text-align:center;color:#BD4A34;font-weight:700;"
+                "letter-spacing:.05em;margin-top:4px;'>獲得済み</p>",
+                unsafe_allow_html=True,
+            )
+        return
+    st.html(stamp_frame_html(store, got))
+
+
+def coming_soon_tile_html() -> str:
+    return """
+    <div style="width:100%;aspect-ratio:1 / 1;border-radius:0.5rem;
+    border:2px dashed #D8CFBC;display:flex;align-items:center;justify-content:center;
+    flex-direction:column;color:#9C9587;opacity:.6;">
+      <span style="font-size:22px;">？</span>
+      <span style="font-size:12px;margin-top:4px;">近日公開</span>
+    </div>
+    """
+
+
 # --- 画面 ---------------------------------------------------------------
 st.caption("SHINJO・MANBACHO")
 st.title("万場町まちなかスタンプラリー")
@@ -165,12 +190,17 @@ if st.session_state.view == "list":
         st.success("すべてのスタンプを集めました！おめでとうございます 🎉")
 
     cols_per_row = 4
-    for row_start in range(0, len(STORES), cols_per_row):
-        row_stores = STORES[row_start : row_start + cols_per_row]
+    placeholder_count = max(0, TOTAL_PLANNED_STORES - len(STORES))
+    tiles = list(STORES) + [None] * placeholder_count
+    for row_start in range(0, len(tiles), cols_per_row):
+        row_tiles = tiles[row_start : row_start + cols_per_row]
         cols = st.columns(cols_per_row)
-        for col, store in zip(cols, row_stores):
-            got = store["id"] in st.session_state.stamps
+        for col, store in zip(cols, row_tiles):
             with col:
+                if store is None:
+                    st.html(coming_soon_tile_html())
+                    continue
+                got = store["id"] in st.session_state.stamps
                 st.html(tile_css(store, got))
                 label = f"{store['icon']}\n\n{store['name']}"
                 if st.button(label, key=f"tile_{store['id']}", use_container_width=True):
@@ -196,7 +226,7 @@ else:
         st.markdown("**🗣️ オーナーにこんなことを聞いてみては？**")
         st.write(store["question"])
 
-    st.html(stamp_frame_html(store, got))
+    render_stamp(store, got)
 
     show_key = f"show_scanner_{store['id']}"
 
