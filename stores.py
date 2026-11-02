@@ -69,4 +69,16 @@ STORES = [
         "icon": "👜",
         "stamp_image": "assets/stamps/shoji_kaban.png",
     },
+    {
+        "id": "kasahara",
+        "name": "笠原商店",
+        "owner_name": "（オーナー名を入力）",
+        "photo": "assets/kasahara.jpg",
+        "intro": "（お店の紹介文をここに入力してください。営業時間や取り扱い商品など）",
+        "question": "（オーナーへの質問をここに入力してください。例：一番人気の商品は？）",
+        "secret": "2MAtAQcU_X5",
+        "accent": ("#C75B3F", "#E8A87C"),
+        "icon": "🏪",
+        "stamp_image": "assets/stamps/kasahara.png",
+    },
 ]
