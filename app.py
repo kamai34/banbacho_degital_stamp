@@ -121,15 +121,15 @@ def tile_css(store: dict, got: bool) -> str:
         background: linear-gradient(135deg, {a}, {b}) !important;
         color: #fff !important;
         aspect-ratio: 1 / 1;
+        font-size: 20px !important;
         font-weight: 700 !important;
         box-shadow: {ring};
         opacity: {opacity};
     }}
-    .st-key-tile_{store['id']} button p:first-of-type {{
-        font-size: 30px !important;
-    }}
-    .st-key-tile_{store['id']} button p:last-of-type {{
-        font-size: 10px !important;
+    @media (max-width: 640px) {{
+        .st-key-tile_{store['id']} button {{
+            font-size: 32px !important;
+        }}
     }}
     </style>
     """
@@ -207,8 +207,7 @@ if st.session_state.view == "list":
                     continue
                 got = store["id"] in st.session_state.stamps
                 st.html(tile_css(store, got))
-                label = f"{store['icon']}\n\n{store['name']}"
-                if st.button(label, key=f"tile_{store['id']}", use_container_width=True):
+                if st.button(store["name"], key=f"tile_{store['id']}", use_container_width=True):
                     go_detail(store["id"])
                     st.rerun()
 
