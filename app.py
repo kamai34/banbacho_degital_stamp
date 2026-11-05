@@ -121,10 +121,15 @@ def tile_css(store: dict, got: bool) -> str:
         background: linear-gradient(135deg, {a}, {b}) !important;
         color: #fff !important;
         aspect-ratio: 1 / 1;
-        font-size: 15px !important;
         font-weight: 700 !important;
         box-shadow: {ring};
         opacity: {opacity};
+    }}
+    .st-key-tile_{store['id']} button p:first-of-type {{
+        font-size: 30px !important;
+    }}
+    .st-key-tile_{store['id']} button p:last-of-type {{
+        font-size: 10px !important;
     }}
     </style>
     """
