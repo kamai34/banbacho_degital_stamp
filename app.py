@@ -128,7 +128,7 @@ def tile_css(store: dict, got: bool) -> str:
     }}
     @media (max-width: 640px) {{
         .st-key-tile_{store['id']} button {{
-            font-size: 32px !important;
+            font-size: 56px !important;
         }}
     }}
     </style>
