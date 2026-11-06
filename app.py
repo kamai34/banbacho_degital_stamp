@@ -223,12 +223,7 @@ else:
 
     with st.container(border=True):
         st.image(store["photo"], use_container_width=True)
-        st.markdown(f"**オーナー**：{store['owner_name']}")
         st.write(store["intro"])
-
-    with st.container(border=True):
-        st.markdown("**🗣️ オーナーにこんなことを聞いてみては？**")
-        st.write(store["question"])
 
     render_stamp(store, got)
 
