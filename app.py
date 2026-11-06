@@ -126,6 +126,10 @@ def tile_css(store: dict, got: bool) -> str:
         box-shadow: {ring};
         opacity: {opacity};
     }}
+    .st-key-tile_{store['id']} button [data-testid="stMarkdownContainer"],
+    .st-key-tile_{store['id']} button [data-testid="stMarkdownContainer"] p {{
+        font-size: inherit !important;
+    }}
     @media (max-width: 640px) {{
         .st-key-tile_{store['id']} button {{
             font-size: 56px !important;
