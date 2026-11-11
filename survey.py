@@ -106,28 +106,35 @@ def render() -> None:
         )
 
     if submitted:
-        analytics.log_survey(
-            gender=gender or "",
-            age=age or "",
-            origin=(origin_other if origin == "その他" and origin_other else origin) or "",
-            found_new=found_new or "",
-            unknown_stores=unknown_stores,
-            why_visited=(
-                why_visited_other
-                if why_visited == "その他" and why_visited_other
-                else why_visited
+        try:
+            analytics.log_survey(
+                gender=gender or "",
+                age=age or "",
+                origin=(origin_other if origin == "その他" and origin_other else origin)
+                or "",
+                found_new=found_new or "",
+                unknown_stores=unknown_stores,
+                why_visited=(
+                    why_visited_other
+                    if why_visited == "その他" and why_visited_other
+                    else why_visited
+                )
+                or "",
+                why_not_visited=(
+                    why_not_visited_other
+                    if why_not_visited == "その他" and why_not_visited_other
+                    else why_not_visited
+                )
+                or "",
+                how_known=how_known,
+                how_known_other=how_known_other if "その他" in how_known else "",
+                comment=comment or "",
+                stamped_stores=stamped_names,
             )
-            or "",
-            why_not_visited=(
-                why_not_visited_other
-                if why_not_visited == "その他" and why_not_visited_other
-                else why_not_visited
-            )
-            or "",
-            how_known=how_known,
-            how_known_other=how_known_other if "その他" in how_known else "",
-            comment=comment or "",
-            stamped_stores=stamped_names,
-        )
+        except Exception as e:
+            # 記録に失敗しても回答自体は受け取ったことにする（送信した人が
+            # エラー画面を見て不安にならないようにするため）。原因はサーバー
+            # ログに残す。
+            print(f"[survey] failed to record response: {e}")
         st.session_state.survey_submitted = True
         st.rerun()
