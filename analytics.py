@@ -16,8 +16,8 @@ import streamlit as st
 
 JST = timezone(timedelta(hours=9))
 
-SHEET_ACCESS = "access_log"
 SHEET_STAMPS = "stamp_log"
+SHEET_SURVEY = "survey_responses"
 
 _SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -56,11 +56,53 @@ def _append_row(sheet_name: str, header: list[str], row: list) -> None:
         print(f"[analytics] failed to log to '{sheet_name}': {e}")
 
 
-def log_access(age_group: str) -> None:
-    now = datetime.now(JST).strftime("%Y-%m-%d %H:%M:%S")
-    _append_row(SHEET_ACCESS, ["日時", "年代"], [now, age_group])
-
-
 def log_stamp(store_id: str, store_name: str) -> None:
     now = datetime.now(JST).strftime("%Y-%m-%d %H:%M:%S")
     _append_row(SHEET_STAMPS, ["日時", "店舗ID", "店舗名"], [now, store_id, store_name])
+
+
+def log_survey(
+    gender: str,
+    age: str,
+    origin: str,
+    found_new: str,
+    unknown_stores: list[str],
+    why_visited: str,
+    why_not_visited: str,
+    how_known: list[str],
+    how_known_other: str,
+    comment: str,
+    stamped_stores: list[str],
+) -> None:
+    now = datetime.now(JST).strftime("%Y-%m-%d %H:%M:%S")
+    _append_row(
+        SHEET_SURVEY,
+        [
+            "日時",
+            "性別",
+            "年代",
+            "居住地",
+            "今まで知らなかったお店に入ったか",
+            "知らなかったお店",
+            "行った理由",
+            "行かなかった理由",
+            "認知経路",
+            "認知経路その他",
+            "感想",
+            "本日スタンプを押したお店(自動取得)",
+        ],
+        [
+            now,
+            gender,
+            age,
+            origin,
+            found_new,
+            "、".join(unknown_stores),
+            why_visited,
+            why_not_visited,
+            "、".join(how_known),
+            how_known_other,
+            comment,
+            "、".join(stamped_stores),
+        ],
+    )

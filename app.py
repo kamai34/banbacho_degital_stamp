@@ -8,10 +8,7 @@ from qr_scanner_component import qr_scanner
 from qr_token import parse_token
 from stores import STORES, TOTAL_PLANNED_STORES
 
-AGE_GROUPS = ["10代以下", "20代", "30代", "40代", "50代", "60代", "70代", "80代以上"]
-
 _STAMPS_KEY = "manbacho_stamps"
-_AGE_SURVEY_KEY = "manbacho_age_survey_done"
 
 
 def _storage() -> LocalStorage:
@@ -33,18 +30,17 @@ def save_stamps(stamps: set[str]) -> None:
     _storage().setItem(_STAMPS_KEY, ",".join(sorted(stamps)))
 
 
-def load_age_survey_done() -> bool:
-    return _storage().getItem(_AGE_SURVEY_KEY) == "1"
-
-
-def save_age_survey_done() -> None:
-    _storage().setItem(_AGE_SURVEY_KEY, "1")
-
 st.set_page_config(
     page_title="万場町まちなかスタンプラリー",
     page_icon="🏮",
     layout="centered",
 )
+
+if st.query_params.get("page") == "survey":
+    import survey
+
+    survey.render()
+    st.stop()
 
 # --- 初期化 -----------------------------------------------------------
 # local storage からの読み出しはブラウザとの往復が必要なため、セッション開始直後の
@@ -52,13 +48,10 @@ st.set_page_config(
 # 都度合算しつつ、数回リトライしてから値を確定させる。
 if "stamps" not in st.session_state:
     st.session_state.stamps = set()
-    st.session_state.age_survey_done = False
     st.session_state.stamps_load_attempts = 0
 
 if st.session_state.stamps_load_attempts < 3:
     st.session_state.stamps |= load_stamps()
-    if load_age_survey_done():
-        st.session_state.age_survey_done = True
     st.session_state.stamps_load_attempts += 1
     st.rerun()
 
@@ -69,33 +62,10 @@ if st.session_state.stamps_load_attempts < 3:
 st.session_state.setdefault("pending_saves", 0)
 if st.session_state.pending_saves > 0:
     save_stamps(st.session_state.stamps)
-    if st.session_state.age_survey_done:
-        save_age_survey_done()
     st.session_state.pending_saves -= 1
     if st.session_state.pending_saves > 0:
         time.sleep(0.3)
         st.rerun()
-
-# --- 年代アンケート（端末ごとに初回アクセス時1回だけ） -----------------------
-if not st.session_state.age_survey_done:
-    st.caption("SHINJO・MANBACHO")
-    st.title("万場町まちなかスタンプラリー")
-    st.write("ようこそ！差し支えなければ、年代を教えてください（任意・今後の企画の参考にします）")
-
-    chosen = None
-    for age_group in AGE_GROUPS:
-        if st.button(age_group, key=f"age_{age_group}", use_container_width=True):
-            chosen = age_group
-
-    skip = st.button("答えない", use_container_width=True)
-
-    if chosen or skip:
-        analytics.log_access(chosen or "未回答")
-        st.session_state.age_survey_done = True
-        st.session_state.pending_saves = 3
-        st.rerun()
-
-    st.stop()
 
 st.session_state.setdefault("view", "list")
 st.session_state.setdefault("selected_store", None)
@@ -189,6 +159,7 @@ def coming_soon_tile_html() -> str:
 # --- 画面 ---------------------------------------------------------------
 st.caption("SHINJO・MANBACHO")
 st.title("万場町まちなかスタンプラリー")
+st.markdown("[📋 アンケートにご協力ください](?page=survey)")
 
 if st.session_state.view == "list":
     got_count = len(st.session_state.stamps)
