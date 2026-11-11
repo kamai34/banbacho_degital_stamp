@@ -77,6 +77,7 @@ STORES = [
         "secret": "uDiTti3B_8f",
         "accent": ("#7B5EA7", "#C3AED6"),
         "icon": "✂️",
+        "stamp_image": "assets/stamps/hair_studio_bi.png",
     },
     {
         "id": "shinohara",
@@ -86,6 +87,7 @@ STORES = [
         "secret": "Hnm3ErLwH1Q",
         "accent": ("#B08D36", "#E2C275"),
         "icon": "🫘",
+        "stamp_image": "assets/stamps/shinohara.png",
     },
     {
         "id": "aoyama",
@@ -95,6 +97,7 @@ STORES = [
         "secret": "yi2kZFYac6Y",
         "accent": ("#1E88B8", "#8FD9E8"),
         "icon": "🚲",
+        "stamp_image": "assets/stamps/aoyama.png",
     },
     {
         "id": "isotaro",
@@ -104,5 +107,6 @@ STORES = [
         "secret": "32RWau4m2EW",
         "accent": ("#D98A3D", "#F2C879"),
         "icon": "🖨️",
+        "stamp_image": "assets/stamps/isotaro.png",
     },
 ]
