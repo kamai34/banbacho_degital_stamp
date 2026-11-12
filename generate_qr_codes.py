@@ -15,6 +15,6 @@ OUT_DIR.mkdir(exist_ok=True)
 for store in STORES:
     token = make_token(store["id"], store["secret"])
     img = qrcode.make(token)
-    out_path = OUT_DIR / f"{store['id']}.png"
+    out_path = OUT_DIR / f"{store['name']}.png"
     img.save(out_path)
     print(f"generated: {out_path}  (token: {token})")
